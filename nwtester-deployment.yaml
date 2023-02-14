@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nwtesters-deployment
+  namespace: app-ns
+  labels:
+    app: nwtester
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nwtester
+  template:
+    metadata:
+      labels:
+        app: nwtester
+    spec:
+      containers:
+      - name: nwtester
+        image: harbor-repo.vmware.com/dockerhub-proxy-cache/wbitt/network-multitool
+        ports:
+        - containerPort: 80

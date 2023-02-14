@@ -1,0 +1,21 @@
+apiVersion: nsx.vmware.com/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: db-isolation
+  namespace: namespace-1
+spec:
+  priority: 1
+  appliedTo:
+    - vmSelector: 
+        matchLabels:
+          role: db
+  rules:
+    - direction: in
+      action: allow
+      sources:
+        - ipBlocks:
+            - cidr: 10.244.0.52/32
+    - direction: out
+      action: allow
+    - direction: in
+      action: drop

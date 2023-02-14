@@ -1,0 +1,34 @@
+apiVersion: crd.antrea.io/v1alpha1
+kind: ClusterNetworkPolicy
+metadata:
+  name: backend-db-acnp
+spec:
+  egress:
+  - action: Allow
+    appliedTo:
+    - podSelector:
+        matchLabels:
+          app: backend-app
+    to:
+    - ipBlock:
+        cidr: 10.244.0.51/32
+  - action: Drop
+    appliedTo:
+    - podSelector: {}
+    to:
+    - ipBlock:
+        cidr: 10.244.0.51/32
+  - action: Allow
+    appliedTo:
+    - namespaceSelector:
+        matchLabels:
+          ns: app-ns
+    to: []
+  ingress:
+  - action: Allow
+    appliedTo:
+    - namespaceSelector:
+        matchLabels:
+          ns: app-ns
+    from: []
+  priority: 1
