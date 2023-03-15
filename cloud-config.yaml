@@ -9,7 +9,7 @@ users:
   - name: dev
     gecos: Dev S. Ops
     lock_passwd: false
-    passwd: $6$rounds=4096$Jgu6vHglZxhovsad$nLEB6bJDgX1Z6wLF41Jlog53umYYK/PQaItvr6hyO74sDSphke.OyfWMxtHqeGBvtT.GFVBIvIQW.kasvVi2M.
+    passwd: $6$n/zJuy.x/O0oRKHp$sRK0wNmKkTRX26poRTVPIsXiz4u9SvVR2euzNV7ZXR9DTD.L3XgH0TgZZyxiGE1Mw.B6D8YcqCrLpwDCoRnBQ.
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo, users, admin
     shell: /bin/bash

@@ -24,6 +24,18 @@ spec:
       labels:
         app: frontend-app
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - backend-app
+              topologyKey: kubernetes.io/hostname
       containers:
         - name: frontend-app
           image: jswolf059/developer-utilities-frontend

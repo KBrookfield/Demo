@@ -5,7 +5,7 @@ metadata:
 type: Opaque
 data:
   #api_url: <BASE64_ENCODED_IP:PORT_FOR_backend-app-service>
-  api_url: MTkyLjE2OC4zMC4zODo1MDAw
+  api_url: 
 
 ---
 apiVersion: apps/v1
@@ -24,9 +24,19 @@ spec:
       labels:
         app: frontend-app
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - backend-app
+            topologyKey: kubernetes.io/hostname
       containers:
         - name: frontend-app
-          image: jswolf059/developer-utilities-frontend
+          image: jswolf059/developer-utilities-frontend:latest
           ports:
             - containerPort: 5000
           env:

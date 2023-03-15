@@ -11,13 +11,13 @@ spec:
           app: backend-app
     to:
     - ipBlock:
-        cidr: 10.244.0.51/32
+        cidr: 10.244.0.50/32
   - action: Drop
     appliedTo:
     - podSelector: {}
     to:
     - ipBlock:
-        cidr: 10.244.0.51/32
+        cidr: 10.244.0.50/32
   - action: Allow
     appliedTo:
     - namespaceSelector:

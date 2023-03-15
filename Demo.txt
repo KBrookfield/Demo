@@ -1,0 +1,77 @@
+Create K8s storage policy
+Enable HA
+Create TKG Content Library - https://wp-content.vmware.com/v2/latest/lib.json
+Create VM image Content Library - https://s3.us-west-2.amazonaws.com/cspmarketplacemainbuck/marketplace-product-files/lib_2acf4023-1778-4e6a-a892-7635b8c7f4fb_69990885-09df-4810-8d0d-eebd3663ef54.json
+Enable Workload Management
+Create Namespace-1
+Assign storage
+Assign TKG CL
+Assign VM Service CL and sizes
+Download https://github.com/vsphere-tmm/vsphere-with-tanzu-dev-center
+Move files to C:\Demo
+Login to CLI VM (rm -rf .kube/config)
+kubectl vsphere login --server=192.168.30.34 --vsphere-username administrator@vsphere.local --insecure-skip-tls-verify
+kubectl describe ns namespace-1
+kubectl get vmclass -n namespace-1
+kubectl get virtualmachineimages -n namespace-1
+kubectl apply -f tkc-1.yaml -n namespace-1
+watch kubectl get tkc tkc-1 -n namespace-1 21:58 22:22
+https://docs.vmware.com/en/VMware-NSX-T-Data-Center/3.2/administration/GUID-DC9552EA-D324-4959-BEE8-8609BC1FF1C3.html
+openssl genrsa -out tkc-1.key 2048
+openssl req -new -key tkc-1.key -out tkc-1.csr -subj "/C=US/ST=CA/L=Palo Alto/O=VMware/OU=Antrea Cluster/CN=tkc-1"
+openssl x509 -req -days 3650 -sha256 -in tkc-1.csr -signkey tkc-1.key -out tkc-1.crt
+Add .crt in NSX-T
+kubectl vsphere login --server=192.168.30.34 --tanzu-kubernetes-cluster-name tkc-1 --vsphere-username administrator@vsphere.local --insecure-skip-tls-verify
+kubectl get pod -n kube-system -l component=antrea-controller
+kubectl exec -it antrea-controller-f75d9d879-l57tj -n kube-system -- antctl version
+kubectl get node -o wide
+kubectl apply -f pod-security-policy.yaml
+kubectl apply -f bootstrap-config.yaml
+kubectl apply -f interworking.yaml 23:12 23:13
+kubectl get pods -o wide -n vmware-system-antrea
+kubectl config use-context namespace-1
+kubectl apply -f mysql-vm.yaml -n namespace-1
+kubectl get vm mysql-db -n namespace-1 -o wide
+echo -n "10.244.0.50" |base64 -w 0
+kubectl config use-context tkc-1
+kubectl create ns app-ns
+kubectl create secret docker-registry docker-hub-creds --docker-server=docker.io --docker-username=demoaccount2023 --docker-password=DevOps!23 -n app-ns
+kubectl apply -f backend-app.yaml -n app-ns
+kubectl get pods -n app-ns
+kubectl get service -n app-ns
+curl -X GET 192.168.30.37:5000/api/index
+echo -n "192.168.30.37:5000" | base64 -w0
+kubectl apply -f frontend-app.yaml -n app-ns
+kubectl get pods -n app-ns
+kubectl get service -n app-ns
+http://192.168.30.38:5000/
+kubectl get pods -n app-ns -o wide
+kubectl get node -o wide
+Update NSX Security Policy
+kubectl config use-context namespace-1
+kubectl label vm mysql-db -n namespace-1 role=db
+kubectl apply -f nsx-security-policy.yaml
+Check NSX DFW
+Chech App
+kubectl config use-context tkc-1
+kubectl apply -f nwtester-deployment.yaml
+kubectl get pod -n app-ns -o wide
+kubectl exec -it  -n app-ns -- /bin/bash
+ping 10.244.0.50
+kubectl exec -it nwtesters-deployment-685ff44569-nr85r -n app-ns -- /bin/bash
+ping 10.244.0.50
+kubectl label ns app-ns ns=app-ns
+kubectl apply -f backend-db-acnp.yaml
+kubectl get acnp
+kubectl get pod -n app-ns -o wide
+kubectl exec -it nwtesters-deployment-685ff44569-clxfw -n app-ns -- /bin/bash
+ping 10.244.0.50
+Check App
+
+
+
+
+Cleanup:
+kubectl config use-context 192.168.30.34
+kubectl delete -f nsx-security-policy.yaml -n namespace-1
+kubectl delete ns namespace-1

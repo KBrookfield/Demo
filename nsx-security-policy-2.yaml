@@ -1,7 +1,7 @@
 apiVersion: nsx.vmware.com/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: db-isolation
+  name: db-isolation-2
   namespace: namespace-1
 spec:
   priority: 1
@@ -14,7 +14,7 @@ spec:
       action: allow
       sources:
         - ipBlocks:
-            - cidr: 10.244.0.35/32
+            - cidr: 10.244.0.36/32
     - direction: out
       action: allow
     - direction: in
