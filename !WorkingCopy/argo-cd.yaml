@@ -1,0 +1,30 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: argo-cd.fling.vsphere.vmware.com
+spec:
+  displayName: argo-cd
+  shortDescription: Argo CD
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: argo-cd.fling.vsphere.vmware.com.1.0.0
+spec:
+  refName: argo-cd.fling.vsphere.vmware.com
+  version: 1.0.0
+  releasedAt: 2021-05-05T18:57:06Z
+  template: # type of App CR
+    spec:
+      fetch:
+      # An imgpkg bundle is an OCI image that contains Kubernetes configurations.
+      # Refer to carvel-imgpkg/README for steps of building a bundle.
+      - imgpkgBundle:
+          image: harbor.vmw.lab/argocd/argocd:v1
+      template:
+        - ytt:
+            paths:
+              - config
+      deploy:
+        - kapp: {}

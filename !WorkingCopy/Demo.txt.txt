@@ -1,0 +1,43 @@
+Create K8s storage policy - k8s-storage-policy
+Enable HA
+Create TKG Content Library - https://wp-content.vmware.com/v2/latest/lib.json
+Create VM image Content Library - https://s3.us-west-2.amazonaws.com/cspmarketplacemainbuck/marketplace-product-files/lib_2acf4023-1778-4e6a-a892-7635b8c7f4fb_69990885-09df-4810-8d0d-eebd3663ef54.json
+Enable Workload Management
+Create Namespace-1
+Assign storage
+Assign TKG CL
+Assign VM Service CL and sizes
+Download https://github.com/vsphere-tmm/vsphere-with-tanzu-dev-center
+Move files to C:\Demo
+Login to CLI VM (rm -rf .kube/config)
+kubectl vsphere login --server=192.168.30.34 --vsphere-username administrator@vsphere.local
+kubectl describe ns namespace-1
+kubectl get vmclass -n namespace-1
+kubectl get virtualmachineimages -n namespace-1
+kubectl apply -f tkc-1.yaml -n namespace-1
+kubectl get service mysql-db -n namespace-1
+kubectl vsphere login --server=192.168.30.34 --tanzu-kubernetes-cluster-name tkg-cc-1 --tanzu-kubernetes-cluster-namespace namespace-1 --vsphere-username administrator@vsphere.local
+
+kubectl apply -f pod-security-policy.yaml
+
+kubectl config use-context namespace-1
+kubectl apply -f mysql-vm.yaml -n namespace-1
+kubectl get vm mysql-db -n namespace-1 -o wide
+echo -n "10.244.0.50" |base64 -w 0
+kubectl config use-context tkg-cc--1
+kubectl apply -f pod-security-policy.yaml
+kubectl create ns app-ns
+kubectl create secret docker-registry docker-hub-creds --docker-server=harbor.vmw.lab --docker-username=admin --docker-password=Harbor12345 -n app-ns
+kubectl apply -f backend-app.yaml -n app-ns
+kubectl get pods -n app-ns
+kubectl get service -n app-ns
+curl -X GET 192.168.30.38:5000/api/index
+echo -n "192.168.30.38:5000" | base64 -w0
+kubectl apply -f frontend-app.yaml -n app-ns
+kubectl get pods -n app-ns
+kubectl get service -n app-ns
+http://192.168.30.38:5000/
+kubectl get pods -n app-ns -o wide
+kubectl get node -o wide
+
+Chech App

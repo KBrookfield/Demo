@@ -1,0 +1,31 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: carvel-imgpkg.fling.vsphere.vmware.com
+spec:
+  displayName: carvel-imgpkg
+  shortDescription: Carvel tool test
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: carvel-imgpkg.fling.vsphere.vmware.com.0.0.0
+spec:
+  refName: carvel-imgpkg.fling.vsphere.vmware.com
+  version: 0.0.0
+  releasedAt: 2021-05-05T18:57:06Z
+  template: # type of App CR
+    spec:
+      fetch:
+      # An imgpkg bundle is an OCI image that contains Kubernetes configurations.
+      # Refer to carvel-imgpkg/README for steps of building a bundle.
+      - imgpkgBundle:
+          image: harbor.vmw.lab/carvel/simple-app-bundle:v0.0.0
+      template:
+        - ytt:
+            paths:
+              - config-step-2-template
+              - config-step-2a-overlays
+      deploy:
+        - kapp: {}

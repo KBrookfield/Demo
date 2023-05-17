@@ -1,0 +1,64 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: argocd-operator.fling.vsphere.vmware.com
+spec:
+  displayName: argocd-operator
+  iconSVGBase64: none
+  longDescription: argocd-operator is used to deploy instance of argocd.
+  shortDescription: argocd-operator is used to deploy individual instances of argocd.
+  providerName: VMware
+  maintainers:
+  - name: First
+  - name: Second
+  - name: Third
+  categories:
+  - CI/CD
+  - GitOps
+  supportDescription: Support provided by VMware for deployment on TKG 1.4+ clusters. Best-effort support for deployment on any conformant Kubernetes cluster. Contact support by opening a support request via VMware Cloud Services or my.vmware.com.
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: argocd-operator.fling.vsphere.vmware.com.0.6.0
+spec:
+  refName: argocd-operator.fling.vsphere.vmware.com
+  version: 0.6.0
+  releasedAt: "2021-05-13T18:00:00Z"
+  releaseNotes: argo-cd v0.6.0 https://github.com/argo/argo/releases/tag/v1.0.0
+  capacityRequirementsDescription: Varies significantly based on cluster size. This should be tuned based on observed usage.
+  valuesSchema:
+    openAPIv3:
+      title: argo-cd.wcp.vmware.com.1.0.0 values schema
+      properties:
+        namespace:
+          type: string
+          description: The namespace in which to deploy argocd-opearator.
+          default: svc-argo-cd
+  licenses:
+  - 'VMware''s End User License Agreement (Underlying OSS license: Apache License 2.0)'
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: wcp-docker-ci.artifactory.eng.vmware.com/jwolf/argocd-operator-package:v0.6.0
+      template:
+      - ytt:
+          paths:
+          - config/
+          ignoreUnknownComments: true
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+          - --kube-api-qps=20
+          - --kube-api-burst=30
+
+
+
+
+
