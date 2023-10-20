@@ -1,0 +1,40 @@
+#cloud-config
+ssh_pwauth: true
+
+groups:
+  - admingroup: [root,sys]
+
+users:
+  - name: dev
+    gecos: Dev S. Ops
+    lock_passwd: false
+    passwd: $6$n/zJuy.x/O0oRKHp$sRK0wNmKkTRX26poRTVPIsXiz4u9SvVR2euzNV7ZXR9DTD.L3XgH0TgZZyxiGE1Mw.B6D8YcqCrLpwDCoRnBQ.
+    # Password set to DevOps123
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo, users, admin
+    shell: /bin/bash
+
+runcmd:
+  # Update packages
+  - sudo apt-get update && sudo apt-get upgrade
+  # Install tools
+  - sudo apt install -y ca-certificates curl wget gnupg net-tools zip unzip jq zsh bat bash-completion whois 
+  # Install Docker
+  - curl -fsSL https://get.docker.com -o get-docker.sh
+  - sudo sh get-docker.sh
+  - sudo usermod -aG docker dev
+  # Install Carvel tools
+  - wget -O- https://carvel.dev/install.sh > install.sh
+  - sudo bash install.sh
+  # Install kubectl
+  - curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+  - sudo echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+  - sudo apt-get update && sudo apt-get install -y kubectl
+  # Install kubectl-vsphere plugin
+  - curl -ks https://192.168.30.34/wcp/plugin/linux-amd64/vsphere-plugin.zip -o /tmp/vsphere-plugin.zip
+  - unzip -qn /tmp/vsphere-plugin.zip -d /tmp
+  - sudo install /tmp/bin/kubectl-vsphere /usr/local/bin
+  # Install kubectl-cci plugin
+  - curl -ks https://www.mgmt.cloud.vmware.com/ccs-ui/cci-k8s-plugin/linux/kubectl-cci.zip -o /tmp/kubectl-cci.zip
+  - unzip -qn /tmp/kubectl-cci.zip -d /tmp
+  - sudo install /tmp/kubectl-cci /usr/local/bin

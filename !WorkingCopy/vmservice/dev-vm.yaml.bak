@@ -1,0 +1,42 @@
+apiVersion: vmoperator.vmware.com/v1alpha1
+kind: VirtualMachine
+metadata:
+  labels:
+    vm.name: dev-vm
+  name: dev-vm
+  namespace: namespace-1
+spec:
+  imageName: ubuntu-22.04
+  className: best-effort-small
+  powerState: poweredOn
+  storageClass: k8s-storage-policy
+  networkInterfaces:
+  - networkName:
+    networkType: nsx-t
+  vmMetadata:
+      configMapName: dev-vm-cm
+      transport: CloudInit
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: dev-vm-cm
+    namespace: namespace-1
+data:
+  user-data: >-
+    I2Nsb3VkLWNvbmZpZwpzc2hfcHdhdXRoOiB0cnVlCgpncm91cHM6CiAgLSBhZG1pbmdyb3VwOiBbcm9vdCxzeXNdCgp1c2VyczoKICAtIG5hbWU6IGRldgogICAgZ2Vjb3M6IERldiBTLiBPcHMKICAgIGxvY2tfcGFzc3dkOiBmYWxzZQogICAgcGFzc3dkOiAkNiRuL3pKdXkueC9PMG9SS0hwJHNSSzB3Tm1La1RSWDI2cG9SVFZQSXNYaXo0dTlTdlZSMmV1ek5WN1pYUjlEVEQuTDNYZ0gwVGdaWnl4aUdFMU13LkI2RDhZY3FDckxwd0RDb1JuQlEuCiAgICAjIFBhc3N3b3JkIHNldCB0byBEZXZPcHMxMjMKICAgIHN1ZG86IEFMTD0oQUxMKSBOT1BBU1NXRDpBTEwKICAgIGdyb3Vwczogc3VkbywgdXNlcnMsIGFkbWluCiAgICBzaGVsbDogL2Jpbi9iYXNoCgpydW5jbWQ6CiAgIyBVcGRhdGUgcGFja2FnZXMKICAtIHN1ZG8gYXB0LWdldCB1cGRhdGUgJiYgc3VkbyBhcHQtZ2V0IHVwZ3JhZGUKICAjIEluc3RhbGwgdG9vbHMKICAtIHN1ZG8gYXB0IGluc3RhbGwgLXkgY2EtY2VydGlmaWNhdGVzIGN1cmwgd2dldCBnbnVwZyBuZXQtdG9vbHMgemlwIHVuemlwIGpxIHpzaCBiYXQgYmFzaC1jb21wbGV0aW9uIHdob2lzIAogICMgSW5zdGFsbCBrdWJlY3RsCiAgLSBjdXJsIC1mc1NMIGh0dHBzOi8vcGFja2FnZXMuY2xvdWQuZ29vZ2xlLmNvbS9hcHQvZG9jL2FwdC1rZXkuZ3BnIHwgc3VkbyBncGcgLS1kZWFybW9yIC1vIC9ldGMvYXB0L2tleXJpbmdzL2t1YmVybmV0ZXMtYXJjaGl2ZS1rZXlyaW5nLmdwZwogIC0gc3VkbyBlY2hvICJkZWIgW3NpZ25lZC1ieT0vZXRjL2FwdC9rZXlyaW5ncy9rdWJlcm5ldGVzLWFyY2hpdmUta2V5cmluZy5ncGddIGh0dHBzOi8vYXB0Lmt1YmVybmV0ZXMuaW8vIGt1YmVybmV0ZXMteGVuaWFsIG1haW4iIHwgc3VkbyB0ZWUgL2V0Yy9hcHQvc291cmNlcy5saXN0LmQva3ViZXJuZXRlcy5saXN0CiAgLSBzdWRvIGFwdC1nZXQgdXBkYXRlICYmIHN1ZG8gYXB0LWdldCBpbnN0YWxsIC15IGt1YmVjdGwKICAjIEluc3RhbGwga3ViZWN0bC12c3BoZXJlIHBsdWdpbgogIC0gY3VybCAta3MgaHR0cHM6Ly8xMC44MC4wLjIvd2NwL3BsdWdpbi9saW51eC1hbWQ2NC92c3BoZXJlLXBsdWdpbi56aXAgLW8gL3RtcC92c3BoZXJlLXBsdWdpbi56aXAKICAtIHVuemlwIC1xbiAvdG1wL3ZzcGhlcmUtcGx1Z2luLnppcCAtZCAvdG1wCiAgLSBzdWRvIGluc3RhbGwgL3RtcC9iaW4va3ViZWN0bC12c3BoZXJlIC91c3IvbG9jYWwvYmluCiAgIyBJbnN0YWxsIERvY2tlcgogIC0gY3VybCAtZnNTTCBodHRwczovL2dldC5kb2NrZXIuY29tIC1vIGdldC1kb2NrZXIuc2gKICAtIHN1ZG8gc2ggZ2V0LWRvY2tlci5zaAogICMgSW5zdGFsbCBDYXJ2ZWwgdG9vbHMKICAtIHdnZXQgLU8tIGh0dHBzOi8vY2FydmVsLmRldi9pbnN0YWxsLnNoID4gaW5zdGFsbC5zaAogIC0gc3VkbyBiYXNoIGluc3RhbGwuc2gK
+---
+apiVersion: vmoperator.vmware.com/v1alpha1
+kind: VirtualMachineService
+metadata:
+  name: dev-vm-lb
+  namespace: namespace-1
+spec:
+  ports:
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+  selector:
+    vm.name: dev-vm
+  type: LoadBalancer

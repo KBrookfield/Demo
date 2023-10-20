@@ -1,0 +1,22 @@
+devops@cli-vm:~$ history
+    1  kubectl vsphere login --server 192.168.30.34
+    2  exit
+    3  curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    4  sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    5  sudo apt-get update && sudo apt-get install packer
+    6  packer
+    7  packer plugins install github.com/hashicorp/vsphere
+    8  vi test-template.pkr.hcl
+    9  packer build test-template.pkr.hcl
+   10  kubectl get vm
+   11  kubectl vsphere vm web-console packer-vsphere-supervisor-fhmmm -n namespace-1
+   12  ls
+   13  cp test-template.pkr.hcl test2-template.pkr.hcl
+   14  vi test2-template.pkr.hcl
+   15  packer build test2-template.pkr.hcl
+   16  ifconfig
+   17  telnetl
+   18  telnet
+   19  telnet 10.244.0.36 3389
+   20  telnet 192.168.0.37 3389
+   21  history

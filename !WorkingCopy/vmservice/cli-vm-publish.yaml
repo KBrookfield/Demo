@@ -1,0 +1,17 @@
+apiVersion: vmoperator.vmware.com/v1alpha1 
+kind: VirtualMachinePublishRequest 
+metadata:
+  name: cli-vm-image
+  namespace: namespace-1
+spec:
+  source:
+    apiVersion: vmoperator.vmware.com/v1alpha1
+    kind: VirtualMachine 
+    name: cli-vm 
+  target:
+    item:
+      name: cli-vm-image 
+    location:
+      apiVersion: imageregistry.vmware.com/v1alpha1
+      kind: ContentLibrary 
+      name: cl-119428472846574b9
